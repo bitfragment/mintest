@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>mintest</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          
+          <h1 id="mintest">mintest</h1>
+<p>Tiny microlibrary for ad-hoc unit testing in a scratch file
+and for beginning practice or teaching of test-driven
+development (TDD) techniques.</p>
+<p><img src="mintest.gif" alt="mintest in Sublime Text" title="mintest demo"></p>
+<p>Provides strict equality comparison of boolean, numeric, and string
+values or objects containing those value types (shallow comparison).
+Logs results to the browser or Node console in terse or verbose form,
+depending on whether <code>test()</code> is passed a tests object as its second
+argument.</p>
+<h2 id="usage">Usage</h2>
+<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> mintest = <span class="hljs-built_in">require</span>(<span class="hljs-string">'mintest.js'</span>);
+</code></pre>
+<h3 id="terse-results">Terse results</h3>
+<p>For multiple tests.</p>
+<pre><code class="lang-javascript">mintest.test(testFunction, tests);
+</code></pre>
+<p><code>tests</code> is any object with the property <code>tests</code>. The value of
+<code>tests</code> is an array of individual test objects containing input
+parameters and expected return values:</p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> myTests = {
+    tests: [
+        {i: -<span class="hljs-number">1</span>, o: <span class="hljs-number">0</span>},
+        {i:  <span class="hljs-number">0</span>, o: <span class="hljs-number">1</span>}
+    ]
+};
+</code></pre>
+<h3 id="verbose-results">Verbose results</h3>
+<p>For single tests.</p>
+<p><code>expected</code> is the expected value returned by the function invocation
+passed as the first argument. The third and fourth arguments,
+<code>message</code> (a custom failure message) and <code>name</code> (a custom test
+name), are optional.</p>
+<pre><code class="lang-javascript">mintest.test(testFunction([param, [param]...]]), expected, message, name);
+</code></pre>
+<h2 id="console-output">Console output</h2>
+<p>Logs the test function’s name if its <code>name</code> property can be
+accessed (this is not possible with anonymous functions).</p>
+<pre><code>testFunction:✅✅✅
+testFunction:❌❌❌
+</code></pre><p>For more example testing code and console output, see the bottom of
+this file following the source.</p>
+<h2 id="annotated-source">Annotated source</h2>
+<p>Begin module.</p>
+
+          
+            <div class='highlight'><pre><span class="hljs-keyword">const</span> mintest = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{</pre></div>
+          
+        
+
+        
+      </div>
+
+      
+        
+        <p>Mark to represent test success.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> successMark = () =&gt; <span class="hljs-built_in">String</span>.fromCharCode(<span class="hljs-number">9989</span>); <span class="hljs-comment">// ✅</span></pre></div>
+        
+      
+        
+        <p>Mark to represent test failure.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> failMark = () =&gt; <span class="hljs-built_in">String</span>.fromCharCode(<span class="hljs-number">10060</span>); <span class="hljs-comment">// ❌</span></pre></div>
+        
+      
+        
+        <p>Default test failure message.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> failMessage = () =&gt; <span class="hljs-string">'Actual and expected values do not match.'</span>;</pre></div>
+        
+      
+        
+        <p>Verbose message for test success.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> verboseSuccess = (successMark, name) =&gt;
+        `${successMark} ${name} succeeded.`;</pre></div>
+        
+      
+        
+        <p>Verbose message for test failure.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> verboseFailure = (failMark, actual, expected, message, name) =&gt;
+        `${failMark} ${name} FAILED: ${message}\n` +
+        `   [Actual: ${actual} Expected: ${expected}]`;</pre></div>
+        
+      
+        
+        <p>Strict equality comparison.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> isEqual = (a, b) =&gt;
+        (<span class="hljs-keyword">typeof</span> a === <span class="hljs-string">'object'</span> &amp;&amp;
+         <span class="hljs-keyword">typeof</span> b === <span class="hljs-string">'object'</span>)
+            ? isEqualObj(a, b)
+            : a === b;</pre></div>
+        
+      
+        
+        <p>Shallow comparison of objects whose properties are boolean,
+numeric or string values.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> isEqualObj = (a, b) =&gt; {
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> prop <span class="hljs-keyword">in</span> a) {
+            <span class="hljs-keyword">if</span> (b[prop] === <span class="hljs-literal">undefined</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+            <span class="hljs-keyword">if</span> (a[prop] !== b[prop]) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        }
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    };</pre></div>
+        
+      
+        
+        <p>Return a terse evaluation. Expects left and right values
+to be compared, plus success and failure marks.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> terseEval = (left, right, successMark, failMark) =&gt;
+        isEqual(left, right) ? successMark : failMark;</pre></div>
+        
+      
+        
+        <p>Return a verbose evaluation. Receives its parameters from
+<code>verboseTest()</code> and returns a string verbosely summarizing test
+results.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> verboseEval = (successMark, failMark, actual, expected, message, name) =&gt;
+        isEqual(actual, expected)
+            ? verboseSuccess(successMark, name)
+            : verboseFailure(failMark, actual, expected, message, name);</pre></div>
+        
+      
+        
+        <p>Return the result of a single terse test.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> terseTest = (test, testFunction, evalFunction, successMark, failMark) =&gt; {
+        <span class="hljs-keyword">let</span> keys = <span class="hljs-built_in">Object</span>.keys(test),
+            input = test[keys[<span class="hljs-number">0</span>]], output = test[keys[<span class="hljs-number">1</span>]],
+            left = testFunction(input), right = output,
+            result = evalFunction(left, right, successMark, failMark);
+        <span class="hljs-keyword">return</span> result;
+    }</pre></div>
+        
+      
+        
+        <p>Log all terse test results to the console. Expects a string
+representing the name of the tested function, along with
+a tests object.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> terseTests = (testFunction, tests) =&gt; {</pre></div>
+        
+      
+        
+        <p>TODO: the property <code>name</code> of an anonymous function cannot be
+accessed, but named arrow functions are being considered
+for a future edition of ECMAScript?</p>
+
+        
+          <div class='highlight'><pre>        <span class="hljs-keyword">let</span> fName = testFunction.name || <span class="hljs-string">'Anonymous function'</span>;
+        <span class="hljs-keyword">let</span> results = fName + <span class="hljs-string">': '</span>;
+
+        tests.tests.forEach(test =&gt; results += terseTest(
+            test, testFunction, terseEval, successMark(), failMark())
+        );
+
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">console</span>.log(results);
+    };</pre></div>
+        
+      
+        
+        <p>Log verbose test results to the console. Expects two required
+parameters: <code>actual</code>, a value representing the actually
+evaluated return of the tested function, and <code>expected</code>, a value
+representing the expected return value of the tested
+function. Takes two additional optional parameters:
+<code>message</code>, a custom failure message, and <code>name</code>, a custom test
+name.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> verboseTest = (actual, expected, message, name) =&gt; {
+        name = name || <span class="hljs-string">'Unnamed test'</span>;
+        message = message || failMessage();
+
+        <span class="hljs-keyword">let</span> result = verboseEval(successMark(), failMark(),
+                                 actual, expected, message, name);
+
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">console</span>.log(result);
+    };</pre></div>
+        
+      
+        
+        <p>Return an object containing the following methods.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">return</span> {</pre></div>
+        
+      
+        
+        <p>Main test method. If second argument is an object that has
+the property <code>tests</code>, call <code>terseTests</code>; else, call
+<code>verboseTest</code>.</p>
+
+        
+          <div class='highlight'><pre>        test: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+            <span class="hljs-keyword">let</span> argsArr = [].slice.apply(<span class="hljs-built_in">arguments</span>);
+
+            (<span class="hljs-keyword">typeof</span> argsArr[<span class="hljs-number">1</span>] === <span class="hljs-string">'object'</span> &amp;&amp;
+             argsArr[<span class="hljs-number">1</span>].tests !== <span class="hljs-literal">undefined</span>)
+                ? terseTests.apply(<span class="hljs-keyword">this</span>, argsArr)
+                : verboseTest.apply(<span class="hljs-keyword">this</span>, argsArr);
+        }
+
+    };</pre></div>
+        
+      
+        
+        <p>End module.</p>
+
+        
+          <div class='highlight'><pre>}());</pre></div>
+        
+      
+        
+        <p>If we’re using Node, export this module; else, make <code>mintest</code> a
+property of the browser <code>window</code> object.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> <span class="hljs-built_in">module</span> !== <span class="hljs-string">'undefined'</span> &amp;&amp; <span class="hljs-keyword">typeof</span> <span class="hljs-built_in">module</span>.exports !== <span class="hljs-string">'undefined'</span>) {
+    <span class="hljs-built_in">module</span>.exports = mintest;
+} <span class="hljs-keyword">else</span> {
+    <span class="hljs-built_in">window</span>.mintest = mintest;
+}</pre></div>
+        
+      
+        
+        <hr>
+
+        
+      
+        
+        <h2 id="examples">Examples</h2>
+<p>Uncomment the lines below, then execute this file.</p>
+
+        
+          <div class='highlight'><pre>
+<span class="hljs-comment">/*
+</span></pre></div>
+        
+      
+        
+        <h3 id="functions-to-test">Functions to test</h3>
+
+        
+          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">add1</span><span class="hljs-params">(n)</span> </span>{
+    <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addFoo</span><span class="hljs-params">(x)</span> </span>{
+    <span class="hljs-keyword">return</span> x.concat(<span class="hljs-string">'foo'</span>);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getObj</span><span class="hljs-params">(x)</span> </span>{
+    <span class="hljs-keyword">return</span> {p: x};
+}</pre></div>
+        
+      
+        
+        <h3 id="tests-objects">Tests objects</h3>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">let</span> add1Tests = {
+    tests: [
+        {i: -<span class="hljs-number">1</span>, o: <span class="hljs-number">0</span>},
+        {i:  <span class="hljs-number">0</span>, o: <span class="hljs-number">1</span>}
+    ]
+};
+
+<span class="hljs-keyword">let</span> addFooTests = {
+    tests: [
+        {i: <span class="hljs-string">'foo'</span>, o: <span class="hljs-string">'foofoo'</span>},
+        {i: [<span class="hljs-string">'bar'</span>], o: [<span class="hljs-string">'bar'</span>, <span class="hljs-string">'foo'</span>]}
+    ]
+};
+
+<span class="hljs-keyword">let</span> getObjTests = {
+    tests: [
+        {i: <span class="hljs-number">3</span>, o: {p: <span class="hljs-number">3</span>}},
+        {i: <span class="hljs-string">'foo'</span>, o: {p: <span class="hljs-string">'foo'</span>}}
+    ]
+};</pre></div>
+        
+      
+        
+        <h3 id="terse-results-success">Terse results: success</h3>
+
+        
+          <div class='highlight'><pre>mintest.test(add1, add1Tests);
+mintest.test(addFoo, addFooTests);
+mintest.test(getObj, getObjTests);</pre></div>
+        
+      
+        
+        <pre><code>add1: ✅✅
+addFoo: ✅✅
+getObj: ✅✅
+</code></pre>
+        
+      
+        
+        <h3 id="verbose-results-success">Verbose results: success</h3>
+
+        
+      
+        
+        <p>No test message or name:</p>
+
+        
+          <div class='highlight'><pre>mintest.test(add1(<span class="hljs-number">0</span>), <span class="hljs-number">1</span>);
+mintest.test(addFoo(<span class="hljs-string">'foo'</span>), <span class="hljs-string">'foofoo'</span>);
+mintest.test(addFoo([<span class="hljs-string">'bar'</span>]), [<span class="hljs-string">'bar'</span>, <span class="hljs-string">'foo'</span>]);
+mintest.test(getObj(<span class="hljs-string">'foo'</span>), {p: <span class="hljs-string">'foo'</span>});</pre></div>
+        
+      
+        
+        <pre><code>✅ Unnamed test succeeded.
+✅ Unnamed test succeeded.
+✅ Unnamed test succeeded.
+✅ Unnamed test succeeded.
+</code></pre>
+        
+      
+        
+        <p>Test message, but no name:</p>
+
+        
+          <div class='highlight'><pre>mintest.test(addFoo(<span class="hljs-string">'bar'</span>), <span class="hljs-string">'barfoo'</span>, <span class="hljs-string">'Did not handle \"bar\" correctly.'</span>);
+mintest.test(addFoo([<span class="hljs-string">'bar'</span>]), [<span class="hljs-string">'bar'</span>, <span class="hljs-string">'foo'</span>], <span class="hljs-string">'Did not handle [\"bar\"] correctly.'</span>);</pre></div>
+        
+      
+        
+        <pre><code>✅ Unnamed test succeeded.
+✅ Unnamed test succeeded.
+</code></pre>
+        
+      
+        
+        <p>Test message and name:</p>
+
+        
+          <div class='highlight'><pre>mintest.test(addFoo(<span class="hljs-string">'bar'</span>), <span class="hljs-string">'barfoo'</span>, <span class="hljs-string">'Did not handle \"bar\" correctly.'</span>, <span class="hljs-string">'addFoo \"bar\" test'</span>);
+mintest.test(addFoo([<span class="hljs-string">'bar'</span>]), [<span class="hljs-string">'bar'</span>, <span class="hljs-string">'foo'</span>], <span class="hljs-string">'Did not handle [\"bar\"] correctly.'</span>, <span class="hljs-string">'addFoo [\"bar\"] test'</span>);</pre></div>
+        
+      
+        
+        <pre><code>✅ addFoo <span class="hljs-string">"bar"</span> test succeeded.
+✅ addFoo [<span class="hljs-string">"bar"</span>] test succeeded.
+</code></pre>
+        
+      
+        
+        <h3 id="verbose-results-failure">Verbose results: failure</h3>
+
+        
+          <div class='highlight'><pre>
+mintest.test(addFoo(<span class="hljs-string">'bar'</span>), <span class="hljs-string">'WRONG'</span>, <span class="hljs-string">'Did not handle \"bar\" correctly.'</span>, <span class="hljs-string">'addFoo \"bar\" test'</span>);
+mintest.test(addFoo([<span class="hljs-string">'bar'</span>]), <span class="hljs-string">'WRONG'</span>, <span class="hljs-string">'Did not handle [\"bar\"] correctly.'</span>, <span class="hljs-string">'addFoo [\"bar\"] test'</span>);</pre></div>
+        
+      
+        
+        <pre><code>❌ addFoo <span class="hljs-string">"bar"</span> test FAILED: Did not handle <span class="hljs-string">"bar"</span> correctly.
+   [Actual: barfoo Expected: WRONG]
+❌ addFoo [<span class="hljs-string">"bar"</span>] test FAILED: Did not handle [<span class="hljs-string">"bar"</span>] correctly.
+   [Actual: bar,foo Expected: WRONG]
+</code></pre>
+        
+          <div class='highlight'><pre>*/</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>
