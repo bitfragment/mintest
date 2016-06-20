@@ -12,6 +12,8 @@
 // depending on whether `test()` is passed a tests object as its second
 // argument.
 //
+// GitHub: [https://bitfragment.github.io/mintest](https://bitfragment.github.io/mintest)
+//
 //
 // ## Usage
 //
