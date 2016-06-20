@@ -2,4 +2,4 @@
 
 Tiny microlibrary for ad-hoc unit testing
 
-[https://github.com/bitfragment/mintest](https://github.com/bitfragment/mintest)
+[https://bitfragment.github.io/mintest](https://bitfragment.github.io/mintest)
